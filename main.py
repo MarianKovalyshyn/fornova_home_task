@@ -8,7 +8,8 @@ OUTPUT_FILE = "Python-task-result.json"
 def find_min_price_room_type_and_number_of_guests(
     current_hotel: dict, min_price: float
 ) -> tuple[float, str, int]:
-    """Find the cheapest (lowest) shown price, room type and number of guests for this price."""
+    """Find the cheapest (lowest) shown price,
+     room type and number of guests for this price."""
 
     current_number_of_guests = 0
     room_type_to_return = ""
@@ -102,7 +103,9 @@ def main():
             )
             total_prices.update(count_total_price(hotel))
 
-        print_result_to_file(lowest_price, room_type, number_of_guests, total_prices)
+        print_result_to_file(
+            lowest_price, room_type, number_of_guests, total_prices
+        )
 
 
 if __name__ == "__main__":
