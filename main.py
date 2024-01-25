@@ -8,6 +8,8 @@ OUTPUT_FILE = "Python-task-result.json"
 def find_min_price_room_type_and_number_of_guests(
     current_hotel: dict, min_price: float
 ) -> tuple[float, str, int]:
+    """Find the cheapest (lowest) shown price, room type and number of guests for this price."""
+
     current_number_of_guests = 0
     room_type_to_return = ""
 
@@ -24,11 +26,16 @@ def find_min_price_room_type_and_number_of_guests(
 
 
 def extract_room_type(current_room_type):
+    """Extract room type from room name."""
+
     current_room_type = current_room_type[: current_room_type.find("-") - 1]
+
     return current_room_type
 
 
-def count_total_price(current_hotel: dict) -> dict[str, dict[str, float]]:
+def count_total_price(current_hotel: dict) -> dict[str, float]:
+    """Count total price for each room type."""
+
     current_hotel["hotel_name"] = dict()
 
     for current_room, net_price in current_hotel["net_price"].items():
@@ -47,6 +54,8 @@ def count_total_price(current_hotel: dict) -> dict[str, dict[str, float]]:
 
 
 def count_taxes(taxes_str: str) -> float:
+    """Convert taxes from string to float and count sum of all taxes."""
+
     json_data = json.loads(taxes_str)
     taxes_float = 0.0
 
@@ -56,27 +65,45 @@ def count_taxes(taxes_str: str) -> float:
     return taxes_float
 
 
-with open(INPUT_FILE, "r") as input_file:
-    data = json.load(input_file)
-    hotels = data["assignment_results"]
-    lowest_price = float("inf")
-    total_prices = dict()
-
-    for hotel in hotels:
-        (
-            lowest_price,
-            room_type,
-            number_of_guests,
-        ) = find_min_price_room_type_and_number_of_guests(hotel, lowest_price)
-        total_prices.update(count_total_price(hotel))
+def print_result_to_file(
+    lowest_price: float,
+    room_type: str,
+    number_of_guests: int,
+    total_price: dict[str, dict[str, float]],
+):
+    """Print all results to file."""
 
     result = {
         "the cheapest (lowest) shown price": lowest_price,
         "room_type": room_type,
         "number_of_guests": number_of_guests,
-        "total price": total_prices,
+        "total price": total_price,
     }
     json_object = json.dumps(result, indent=4)
 
     with open(OUTPUT_FILE, "w") as output_file:
         output_file.write(json_object)
+
+
+def main():
+    with open(INPUT_FILE, "r") as input_file:
+        data = json.load(input_file)
+        hotels = data["assignment_results"]
+        lowest_price = float("inf")
+        total_prices = dict()
+
+        for hotel in hotels:
+            (
+                lowest_price,
+                room_type,
+                number_of_guests,
+            ) = find_min_price_room_type_and_number_of_guests(
+                hotel, lowest_price
+            )
+            total_prices.update(count_total_price(hotel))
+
+        print_result_to_file(lowest_price, room_type, number_of_guests, total_prices)
+
+
+if __name__ == "__main__":
+    main()
